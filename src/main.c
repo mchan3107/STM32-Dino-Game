@@ -1,8 +1,12 @@
 #include <stdint.h>
 
-uint8_t HelloWorld;
+volatile uint8_t HelloWorld;
 
 int main(void){
-    HelloWorld = 1;
+    while (1) /*First infinite while loop*/
+		{
+			if (Flag) break;
+		}
+		while (1) {} /*Second infinite while loop*/
     return 0;
 }
