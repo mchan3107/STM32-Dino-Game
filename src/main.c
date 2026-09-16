@@ -35,13 +35,9 @@ int main(void){
 	UserButton_Init();
 
 	while (1) {
-		if (GPIO_ReadPin(GPIOA, GPIO_PIN_NUM_0) == GPIO_PIN_HIGH) {
-			SimDelay();	
-			if (GPIO_ReadPin(GPIOA, GPIO_PIN_NUM_0) == GPIO_PIN_HIGH) {
-				/*Toggle the blue LED*/
-				GPIO_TogglePin(GPIOD, GPIO_PIN_NUM_15);
-			}
-		}
+		/*Delay then toggle the blue LED*/
+		SimDelay();	
+		GPIO_TogglePin(GPIOD, GPIO_PIN_NUM_15);
 	}
 
 	return 0;
