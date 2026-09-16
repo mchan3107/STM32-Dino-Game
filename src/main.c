@@ -35,9 +35,11 @@ int main(void){
 	UserButton_Init();
 
 	while (1) {
-		/*Delay then toggle the blue LED*/
+		/*Delay being off, turn on, delay being on, turn off*/
 		SimDelay();	
-		GPIO_TogglePin(GPIOD, GPIO_PIN_NUM_15);
+		GPIO_WritePinBit(GPIOD, GPIO_PIN_NUM_15, GPIO_PIN_HIGH);
+		SimDelay();
+		GPIO_WritePinBit(GPIOD, GPIO_PIN_NUM_15, GPIO_PIN_LOW);
 	}
 
 	return 0;

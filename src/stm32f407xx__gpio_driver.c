@@ -67,3 +67,13 @@ void GPIO_TogglePin(GPIO_RegDef_t *GPIOx, uint8_t PinNumber)
     /* Toggle the pin state*/
     GPIOx->ODR ^= (0x01U << PinNumber);
 }
+
+void GPIO_WritePinBit(GPIO_RegDef_t * GPIOx, uint8_t PinNumber, GPIO_PinState_e PinState) {
+    if (PinState == GPIO_PIN_LOW) {
+        /*Reset the pin state to low*/
+        GPIOx->BSRR |= (0x01 << (PinNumber + 16U));
+    } else {
+        /* Set the state to high*/
+        GPIOx->BSRR |= (0x01 << PinNumber); 
+    }
+}
