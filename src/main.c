@@ -33,13 +33,29 @@ int main(void){
     BlueLED_Init();
 	/*Initialize the user button*/
 	UserButton_Init();
+	/*Lock the LED configuration*/
+	GPIO_LockPinConf(GPIOD, GPIO_PIN_NUM_15);
 
-	while (1) {
-		/*Delay being off, turn on, delay being on, turn off*/
-		SimDelay();	
-		GPIO_WritePinBit(GPIOD, GPIO_PIN_NUM_15, GPIO_PIN_HIGH);
-		SimDelay();
-		GPIO_WritePinBit(GPIOD, GPIO_PIN_NUM_15, GPIO_PIN_LOW);
+	/*Turn on the blue LED*/
+	GPIO_WritePin(GPIOD, GPIO_PIN_NUM_15, GPIO_PIN_HIGH);
+	while (1)
+	{
+		/* Check the button state */
+		if (GPIO_ReadPin(GPIOA, GPIO_PIN_NUM_0) == GPIO_PIN_HIGH)
+		{
+			/* Delay for some ms */
+			SimDelay();
+
+			/* Check the button state */
+			if (GPIO_ReadPin(GPIOA, GPIO_PIN_NUM_0) == GPIO_PIN_HIGH)
+			{
+				/* Change the GPIOD pin number 15 mode from output to input mode */
+				Blinky_LED.GPIO_PinMode = GPIO_MODE_INPUT;
+
+				/* Re-Init the GPIOD pin number 15 */
+				GPIO_Init(GPIOD, Blinky_LED);
+			}
+		}
 	}
 
 	return 0;

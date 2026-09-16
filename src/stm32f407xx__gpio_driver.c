@@ -77,3 +77,23 @@ void GPIO_WritePinBit(GPIO_RegDef_t * GPIOx, uint8_t PinNumber, GPIO_PinState_e 
         GPIOx->BSRR |= (0x01 << PinNumber); 
     }
 }
+
+void GPIO_LockPinConf(GPIO_RegDef_t *GPIOx, uint8_t PinNumber)
+{
+    uint32_t temp1 = (0x01U << 16U);
+    uint32_t temp2 = (0x01U << PinNumber);
+
+    temp1 |= temp2;
+
+    /* WR LCKR[16] = '1' + LCKR[15:0] */
+    GPIOx->LCKR = temp1;
+
+    /* WR LCKR[16] = '0' + LCKR[15:0] */
+    GPIOx->LCKR = temp2;
+
+    /* WR LCKR[16] = '1' + LCKR[15:0] */
+    GPIOx->LCKR = temp1;
+
+    /* RD LCKR */
+    temp1 = GPIOx->LCKR;
+}
