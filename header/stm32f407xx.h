@@ -1,6 +1,7 @@
 #ifndef STM32F407XX_H
 #define STM32F407XX_H
 #include <stdint.h>
+#include "cortexM4.h"
 
 /* GPIO register definition struct */
 typedef struct
@@ -52,23 +53,50 @@ typedef struct {
 
 } RCC_RegDef_t;
 
+/* SYSCFG register definition */
+typedef struct
+{
+    volatile uint32_t MEMRMP;
+    volatile uint32_t PMC;
+    volatile uint32_t EXTICR[4];
+    volatile uint32_t CMPCR;
+} SYSCFG_RegDef_t;
+
+/* EXTI register definition struct */
+typedef struct
+{
+    volatile uint32_t IMR;
+    volatile uint32_t EMR;
+    volatile uint32_t RTSR;
+    volatile uint32_t FTSR;
+    volatile uint32_t SWIER;
+    volatile uint32_t PR;
+} EXTI_RegDef_t;
 
 /* Peripheral base addresses */
-#define AHB1_BASEADDR 0x40020000UL
-#define GPIOA ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x0000UL))
-#define GPIOB ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x0400UL))
-#define GPIOC ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x0800UL))
-#define GPIOD ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x0C00UL))
-#define GPIOE ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x1000UL))
-#define GPIOF ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x1400UL))
-#define GPIOG ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x1800UL))
-#define GPIOH ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x1C00UL))
-#define GPIOI ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x2000UL))
-#define GPIOJ ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x2400UL))
-#define GPIOK ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x2800UL))
+#define AHB1_BASEADDR (0x40020000UL)
+#define AHB2_BASEADDR (0x40010000UL)
+#define GPIOA ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x0000UL)) /* GPIOA base address */
+#define GPIOB ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x0400UL)) /* GPIOB base address */
+#define GPIOC ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x0800UL)) /* GPIOC base address */
+#define GPIOD ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x0C00UL)) /* GPIOD base address */
+#define GPIOE ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x1000UL)) /* GPIOE base address */
+#define GPIOF ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x1400UL)) /* GPIOF base address */
+#define GPIOG ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x1800UL)) /* GPIOG base address */
+#define GPIOH ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x1C00UL)) /* GPIOH base address */
+#define GPIOI ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x2000UL)) /* GPIOI base address */
+#define GPIOJ ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x2400UL)) /* GPIOJ base address */
+#define GPIOK ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x2800UL)) /* GPIOK base address */
 
 /*RCC base address*/
 #define RCC ((RCC_RegDef_t *) (AHB1_BASEADDR + 0x3800UL))
+
+/*SYSCFG base address*/
+#define SYSCFG ((SYSCFG_RegDef_t *) (AHB2_BASEADDR + 0x3800UL))
+
+/*EXTI base address*/
+#define EXTI ((EXTI_RegDef_t *) (AHB1_BASEADDR + 0x3C00UL))
+
 /*GPIO clock enable*/
 #define GPIOA_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 0U)) /*GPIOA peripheral clock enable*/
 #define GPIOB_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 1U)) /*GPIOB peripheral clock enable*/
@@ -80,6 +108,8 @@ typedef struct {
 #define GPIOH_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 7U)) /*GPIOH peripheral clock enable*/
 #define GPIOI_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 8U)) /*GPIOI peripheral clock enable*/
 
+#define SYSCFG_CLK_ENB() (RCC->APB2ENR |= (0x01U << 14U)) /*SYSCFG peripheral clock enable*/
+
 /*GPIO clock disable*/
 #define GPIOA_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 0U)) /*GPIOA peripheral clock disable*/
 #define GPIOB_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 1U)) /*GPIOB peripheral clock disable*/
@@ -90,5 +120,8 @@ typedef struct {
 #define GPIOG_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 6U)) /*GPIOG peripheral clock disable*/
 #define GPIOH_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 7U)) /*GPIOH peripheral clock disable*/
 #define GPIOI_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 8U)) /*GPIOI peripheral clock disable*/
+
+#define SYSCFG_CLK_DIS() (RCC->APB2ENR &= ~(0x01U << 14U)) /*SYSCFG peripheral clock disable*/
+
 #include "stm32f407xx_gpio_driver.h"
 #endif
