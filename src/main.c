@@ -24,7 +24,7 @@ void UserButton_Init(void) {
 	UserButton.GPIO_PinNumber = GPIO_PIN_NUM_0;
 	UserButton.GPIO_PinMode = GPIO_MODE_INPUT;
 	UserButton.GPIO_PUPD = GPIO_NO_PUPD;
-	UserButton.GPIO_EdgeTrigger = GPIO_IT_EDGE_FT; 
+	UserButton.GPIO_EdgeTrigger = GPIO_IT_EDGE_RT; 
 	GPIOA_CLK_ENB();
 	GPIO_Init(GPIOA, UserButton);
 	GPIO_IT_Init(GPIOA, UserButton, 1U);
