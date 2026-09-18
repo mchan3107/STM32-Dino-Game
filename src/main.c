@@ -5,6 +5,15 @@ GPIO_PinConf_t Blinky_LED;
 GPIO_PinConf_t UserButton;
 USART_Conf_t USART3_Conf;
 
+#define RX_BUFFER_SIZE  8U
+#define TX_BUFFER_SIZE  8U
+volatile uint8_t ReceivedMess[RX_BUFFER_SIZE];
+volatile uint8_t SentMess[RX_BUFFER_SIZE] = "J\n";
+volatile uint8_t TxMessSize    = 2U;
+volatile uint8_t RxIndex       = 0U;
+volatile uint8_t RxData        = 0U;
+volatile uint8_t IsRxAvailable = FALSE;
+
 void SimDelay(void) {
 	uint32_t DelayCount;
 	for (DelayCount = 0; DelayCount < 100000; DelayCount++){
@@ -58,8 +67,10 @@ void USART3_Init(void)
     USART3_Conf.WordLength   = USART_WORDLENGTH_8B;    /*8 bit word length*/
     USART3_Conf.OverSampling = USART_OVERSAMPLING_16;  /*Oversampling by 16*/
     USART3_Conf.BaudRate     = USART_BAUDRATE_9600;
-
-    USART3_CLK_ENB();
+	USART3_CLK_ENB();
+	USART3_RXNEIE_ENB();
+	NVIC_SetPriority(IRQ_NO_USART3, 0U);
+	NVIC_EnableIRQ(IRQ_NO_USART3);
     USART_Init(USART3, USART3_Conf);
 }
 
@@ -83,24 +94,48 @@ int main(void){
 
 	while (1)
 	{
-		/*Receive message*/
-		USART_Receive(USART3, (uint8_t *)&ReceivedMess, ReceiveMessSize);
-
-		/*Echo back the received message*/
-		USART_Transmit(USART3, (uint8_t *)&ReceivedMess, ReceiveMessSize);
-
-		/*Check if the received message is "ON_"*/
-		if (strcmp((const char *)ReceivedMess, "ON_") == 0)
+		/*Is new data available?*/
+		if (IsRxAvailable == TRUE)
 		{
-			/*Turn blue LED ON*/
-			GPIO_WritePinBit(GPIOD, GPIO_PIN_NUM_15, GPIO_PIN_HIGH);
-		}
+			/*Check overflow status and store data*/
+			if (RxIndex < RX_BUFFER_SIZE)
+			{
+				/*Store new data to the received message*/
+				ReceivedMess[RxIndex] = RxData;
+				/*Increase the index*/
+				RxIndex++;
+			}
+			else
+			{
+				RxIndex = 0U; /*Overflow recovery*/
+			}
 
-		/*Check if the received message is "OFF"*/
-		if (strcmp((const char *)ReceivedMess, "OFF") == 0)
-		{
-			/*Turn blue LED OFF*/
-			GPIO_WritePinBit(GPIOD, GPIO_PIN_NUM_15, GPIO_PIN_LOW);
+			/*Reset the Rx data available flag to FALSE*/
+			IsRxAvailable = FALSE;
+
+			/*Check if the message is fully received*/
+			if (RxData == '\n')
+			{
+				/*Null-terminate the string/message*/
+				ReceivedMess[RxIndex - 1] = '\0';
+
+				/*Check if the received message is "ON"*/
+				if (strcmp((const char *)ReceivedMess, "ON") == 0)
+				{
+					/*Turn blue LED ON*/
+					GPIO_WritePinBit(GPIOD, GPIO_PIN_NUM_15, GPIO_PIN_HIGH);
+				}
+
+				/*Check if the received message is "OFF"*/
+				if (strcmp((const char *)ReceivedMess, "OFF") == 0)
+				{
+					/*Turn blue LED OFF*/
+					GPIO_WritePinBit(GPIOD, GPIO_PIN_NUM_15, GPIO_PIN_LOW);
+				}
+
+				/*Reset the index*/
+				RxIndex = 0U;
+			}
 		}
 	}
 
@@ -109,17 +144,30 @@ int main(void){
 
 void EXTI0_IRQHandler(void)
 {
-	/*Is the corresponding bit in the EXTI_PR register set?*/
-	if((EXTI->PR >> UserButton.GPIO_PinNumber) & 0x01U)
-	{
-		/*Clear the pending bit by writing 1*/
-		EXTI->PR |= (0x01U << UserButton.GPIO_PinNumber);
-	}
-	SimDelay();
-	/*Check the state of the button again*/
-	if(GPIO_ReadPin(GPIOA, GPIO_PIN_NUM_0) == GPIO_PIN_HIGH)
-	{
-		GPIO_TogglePin(GPIOD, GPIO_PIN_NUM_15);
-	}
+    SimDelay();
+
+    /*Is the corresponding bit in the EXTI_PR register set?*/
+    if((EXTI->PR >> UserButton.GPIO_PinNumber) & 0x01U)
+    {
+        /*Clear the pending bit by writing '1'*/
+        EXTI->PR |= (0x01U << UserButton.GPIO_PinNumber);
+    }
+
+    /*Transmit data*/
+    USART_Transmit(USART3, (uint8_t *)&SentMess, TxMessSize);
 }
+
+void USART3_IRQHandler(void)
+{
+    /*Check if the receive register is not empty*/
+    if ((USART3->SR >> USART_SR_RXNE) & 0x01U)
+    {
+        /*Read received data*/
+        RxData = USART3->DR;
+
+        /*Set the Rx data available flag to TRUE*/
+        IsRxAvailable = TRUE;
+    }
+}
+	
 

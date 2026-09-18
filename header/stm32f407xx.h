@@ -166,6 +166,8 @@ typedef struct
 #define DISABLE 0U
 #define BIT_RESET 0U
 #define BIT_SET 1U
+#define TRUE  1U
+#define FALSE 0U
 
 #include "stm32f407xx_gpio_driver.h"
 #include "stm32f407xx_usart_driver.h"

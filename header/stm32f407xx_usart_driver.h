@@ -50,6 +50,7 @@ typedef struct
 /* USART_CR1 */
 #define USART_CR1_RE        2U      /* RE bit */
 #define USART_CR1_TE        3U      /* TE bit */
+#define USART_CR1_RXNEIE    5U      /* RXNEIE bit */
 #define USART_CR1_PS        9U      /* PS bit */
 #define USART_CR1_PCE       10U     /* PCE bit */
 #define USART_CR1_M         12U     /* M bit */
@@ -66,6 +67,10 @@ typedef struct
 /*USART SR*/
 #define USART_SR_TXE        7U      /* TXE bit */
 #define USART_SR_RXNE       5U      /* RXNE bit */
+
+/*Interrupt configuration*/
+#define USART3_RXNEIE_ENB() (USART3->CR1 |= (1U << USART_CR1_RXNEIE))
+#define USART3_RXNEIE_DIS() (USART3->CR1 &= ~(1U << USART_CR1_RXNEIE))
 
 void USART_Init(USART_RegDef_t *USARTx, USART_Conf_t USART_Conf);
 void USART_Transmit(USART_RegDef_t *USARTx, uint8_t *Mess, uint8_t MessSize);
