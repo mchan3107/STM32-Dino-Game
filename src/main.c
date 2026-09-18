@@ -4,6 +4,7 @@
 GPIO_PinConf_t Blinky_LED;
 GPIO_PinConf_t UserButton;
 USART_Conf_t USART3_Conf;
+TIM_Base_Conf_t TIM6_Conf;
 
 #define RX_BUFFER_SIZE  8U
 #define TX_BUFFER_SIZE  8U
@@ -74,10 +75,22 @@ void USART3_Init(void)
     USART_Init(USART3, USART3_Conf);
 }
 
+void TIM6_Init(void)
+{
+    TIM6_Conf.AutoReloadPreload = ENABLE;
+    TIM6_Conf.Period = 999;             /*1ms period*/
+    TIM6_Conf.Prescaler = 15;           /*Counter clock is 1MHz (with 16 MHz timer clock)*/
+    TIM6_CLK_ENB();
+    TIM_Base_Init(TIM6, TIM6_Conf);
+}
+
+void TIM6_Start(void)
+{
+    TIM_Base_Start(TIM6);
+}
 
 int main(void){
-	uint8_t ReceivedMess[] = "";
-    uint8_t ReceiveMessSize = 3U;
+	uint16_t Timer6DelayCounter = 0U;
 
     /*GPIO init start---------------------------------------------*/
     /*Initialize the blue LED*/
@@ -92,49 +105,36 @@ int main(void){
     USART3_Init();
     /*USART init end----------------------------------------------*/
 
+	/*TIM6 init start----------------------------------------------*/
+	TIM6_Init();
+	/*TIM6 init end------------------------------------------------*/
+
+	/*Start timer 6*/
+	TIM6_Start();
+
 	while (1)
 	{
 		/*Is new data available?*/
 		if (IsRxAvailable == TRUE)
 		{
-			/*Check overflow status and store data*/
-			if (RxIndex < RX_BUFFER_SIZE)
+			/*Check if update event generated*/
+			if (TIM6_UEV_STS() == BIT_SET)
 			{
-				/*Store new data to the received message*/
-				ReceivedMess[RxIndex] = RxData;
-				/*Increase the index*/
-				RxIndex++;
-			}
-			else
-			{
-				RxIndex = 0U; /*Overflow recovery*/
-			}
+				/*Clear the update event status*/
+				TIM6_UEV_STS_CLR();
 
-			/*Reset the Rx data available flag to FALSE*/
-			IsRxAvailable = FALSE;
+				/*Increase the timer delay counter by 1*/
+				Timer6DelayCounter++;
 
-			/*Check if the message is fully received*/
-			if (RxData == '\n')
-			{
-				/*Null-terminate the string/message*/
-				ReceivedMess[RxIndex - 1] = '\0';
-
-				/*Check if the received message is "ON"*/
-				if (strcmp((const char *)ReceivedMess, "ON") == 0)
+				/*Check if 1 second has elapsed*/
+				if (Timer6DelayCounter == 1000)
 				{
-					/*Turn blue LED ON*/
-					GPIO_WritePinBit(GPIOD, GPIO_PIN_NUM_15, GPIO_PIN_HIGH);
-				}
+					/*Toggle the Blue LED*/
+					GPIO_TogglePin(GPIOD, GPIO_PIN_NUM_15);
 
-				/*Check if the received message is "OFF"*/
-				if (strcmp((const char *)ReceivedMess, "OFF") == 0)
-				{
-					/*Turn blue LED OFF*/
-					GPIO_WritePinBit(GPIOD, GPIO_PIN_NUM_15, GPIO_PIN_LOW);
+					/*Reset timer 6 delay counter*/
+					Timer6DelayCounter = 0U;
 				}
-
-				/*Reset the index*/
-				RxIndex = 0U;
 			}
 		}
 	}

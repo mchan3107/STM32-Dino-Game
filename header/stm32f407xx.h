@@ -85,6 +85,21 @@ typedef struct
     volatile uint32_t GTPR;
 } USART_RegDef_t;
 
+/*Timer register definition struct*/
+typedef struct
+{
+    volatile uint32_t CR1;
+    volatile uint32_t CR2;
+    uint32_t RESERVED0;
+    volatile uint32_t DIER;
+    volatile uint32_t SR;
+    volatile uint32_t EGR;
+    uint32_t RESERVED1[3];
+    volatile uint32_t CNT;
+    volatile uint32_t PSC;
+    volatile uint32_t ARR;
+} TIM_RegDef_t;
+
 /* Peripheral base addresses */
 #define AHB1_BASEADDR (0x40020000UL)
 #define AHB2_BASEADDR (0x40010000UL)
@@ -119,6 +134,10 @@ typedef struct
 #define UART5 ((USART_RegDef_t *) (APB1_BASEADDR + 0x5000UL))
 #define USART6 ((USART_RegDef_t *) (APB2_BASEADDR + 0x1400UL))
 
+/*Timer peripheral base address*/
+#define TIM6 ((TIM_RegDef_t *) (APB1_BASEADDR + 0x1000UL))
+#define TIM7 ((TIM_RegDef_t *) (APB1_BASEADDR + 0x1400UL))
+
 /*GPIO clock enable*/
 #define GPIOA_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 0U)) /*GPIOA peripheral clock enable*/
 #define GPIOB_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 1U)) /*GPIOB peripheral clock enable*/
@@ -139,6 +158,10 @@ typedef struct
 #define UART4_CLK_ENB() (RCC->APB1ENR |= (0x01U << 19))
 #define UART5_CLK_ENB() (RCC->APB1ENR |= (0x01U << 20))
 #define USART6_CLK_ENB() (RCC->APB2ENR |= (0x01U << 5))
+
+/*Timer peripheral clock enable*/
+#define TIM6_CLK_ENB() (RCC->APB1ENR |= (0x01U << 4U))
+#define TIM7_CLK_ENB() (RCC->APB1ENR |= (0x01U << 5U))
 
 /*GPIO clock disable*/
 #define GPIOA_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 0U)) /*GPIOA peripheral clock disable*/
@@ -161,6 +184,10 @@ typedef struct
 #define UART5_CLK_DIS() (RCC->APB1ENR &= ~(0x01U << 20))
 #define USART6_CLK_DIS() (RCC->APB2ENR &= ~(0x01U << 5))
 
+/*Timer clock disable*/
+#define TIM6_CLK_DIS() (RCC->APB1ENR &= ~(0x01U << 4U))
+#define TIM7_CLK_DIS() (RCC->APB1ENR &= ~(0x01U << 5U))
+
 /*Common used macros*/
 #define ENABLE 1U
 #define DISABLE 0U
@@ -171,4 +198,5 @@ typedef struct
 
 #include "stm32f407xx_gpio_driver.h"
 #include "stm32f407xx_usart_driver.h"
+#include "stm32f407xx_timer_driver.h"
 #endif
