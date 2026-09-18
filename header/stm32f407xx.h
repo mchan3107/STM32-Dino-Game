@@ -100,6 +100,28 @@ typedef struct
     volatile uint32_t ARR;
 } TIM_RegDef_t;
 
+/*Timer register definition struct*/
+typedef struct
+{
+    volatile uint32_t CR1;
+    volatile uint32_t CR2;
+    volatile uint32_t SMCR;
+    volatile uint32_t DIER;
+    volatile uint32_t SR;
+    volatile uint32_t EGR;
+    volatile uint32_t CCMR[2];
+    volatile uint32_t CCER;
+    volatile uint32_t CNT;
+    volatile uint32_t PSC;
+    volatile uint32_t ARR;
+    uint32_t RESERVED0;
+    volatile uint32_t CCR[4];
+    uint32_t RESERVED1;
+    volatile uint32_t DCR;
+    volatile uint32_t DMAR;
+    volatile uint32_t OR;
+} TIM_RegDef_t;
+
 /* Peripheral base addresses */
 #define AHB1_BASEADDR (0x40020000UL)
 #define AHB2_BASEADDR (0x40010000UL)
@@ -138,6 +160,14 @@ typedef struct
 #define TIM6 ((TIM_RegDef_t *) (APB1_BASEADDR + 0x1000UL))
 #define TIM7 ((TIM_RegDef_t *) (APB1_BASEADDR + 0x1400UL))
 
+/*Timer peripheral base address*/
+#define TIM2    ((TIM_RegDef_t *) (APB1_BASEADDR + 0x0000UL))    /*Timer 2 peripheral base address*/
+#define TIM3    ((TIM_RegDef_t *) (APB1_BASEADDR + 0x0400UL))    /*Timer 3 peripheral base address*/
+#define TIM4    ((TIM_RegDef_t *) (APB1_BASEADDR + 0x0800UL))    /*Timer 4 peripheral base address*/
+#define TIM5    ((TIM_RegDef_t *) (APB1_BASEADDR + 0x0C00UL))    /*Timer 5 peripheral base address*/
+#define TIM6    ((TIM_RegDef_t *) (APB1_BASEADDR + 0x1000UL))    /*Timer 6 peripheral base address*/
+#define TIM7    ((TIM_RegDef_t *) (APB1_BASEADDR + 0x1400UL))    /*Timer 7 peripheral base address*/
+
 /*GPIO clock enable*/
 #define GPIOA_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 0U)) /*GPIOA peripheral clock enable*/
 #define GPIOB_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 1U)) /*GPIOB peripheral clock enable*/
@@ -163,6 +193,14 @@ typedef struct
 #define TIM6_CLK_ENB() (RCC->APB1ENR |= (0x01U << 4U))
 #define TIM7_CLK_ENB() (RCC->APB1ENR |= (0x01U << 5U))
 
+/*Timer peripheral clock enable*/
+#define TIM2_CLK_ENB()    (RCC->APB1ENR |= (0x01 << 0U))    /*Timer 2 peripheral clock enable */
+#define TIM3_CLK_ENB()    (RCC->APB1ENR |= (0x01 << 1U))    /*Timer 3 peripheral clock enable */
+#define TIM4_CLK_ENB()    (RCC->APB1ENR |= (0x01 << 2U))    /*Timer 4 peripheral clock enable */
+#define TIM5_CLK_ENB()    (RCC->APB1ENR |= (0x01 << 3U))    /*Timer 5 peripheral clock enable */
+#define TIM6_CLK_ENB()    (RCC->APB1ENR |= (0x01 << 4U))    /*Timer 6 peripheral clock enable */
+#define TIM7_CLK_ENB()    (RCC->APB1ENR |= (0x01 << 5U))    /*Timer 7 peripheral clock enable */
+
 /*GPIO clock disable*/
 #define GPIOA_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 0U)) /*GPIOA peripheral clock disable*/
 #define GPIOB_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 1U)) /*GPIOB peripheral clock disable*/
@@ -187,6 +225,14 @@ typedef struct
 /*Timer clock disable*/
 #define TIM6_CLK_DIS() (RCC->APB1ENR &= ~(0x01U << 4U))
 #define TIM7_CLK_DIS() (RCC->APB1ENR &= ~(0x01U << 5U))
+
+/*Timer peripheral clock disable*/
+#define TIM2_CLK_DIS()    (RCC->APB1ENR &= ~(0x01U << 0U))    /*TIM2 peripheral clock disable */
+#define TIM3_CLK_DIS()    (RCC->APB1ENR &= ~(0x01U << 1U))    /*TIM3 peripheral clock disable */
+#define TIM4_CLK_DIS()    (RCC->APB1ENR &= ~(0x01U << 2U))    /*TIM4 peripheral clock disable */
+#define TIM5_CLK_DIS()    (RCC->APB1ENR &= ~(0x01U << 3U))    /*TIM5 peripheral clock disable */
+#define TIM6_CLK_DIS()    (RCC->APB1ENR &= ~(0x01U << 4U))    /*TIM6 peripheral clock disable */
+#define TIM7_CLK_DIS()    (RCC->APB1ENR &= ~(0x01U << 5U))    /*TIM7 peripheral clock disable */
 
 /*Common used macros*/
 #define ENABLE 1U
