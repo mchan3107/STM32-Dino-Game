@@ -32,6 +32,8 @@ typedef struct
 #define IRQ_NO_EXTI9_5 23U
 #define IRQ_NO_EXTI10_15 40U
 
+#define NULL ((void *)0)
+
 void NVIC_SetPriority(uint8_t IRQNumber, uint8_t Priority);
 void NVIC_EnableIRQ(uint8_t IRQNumber);
 

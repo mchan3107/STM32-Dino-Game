@@ -1,0 +1,73 @@
+#ifndef STM32F407XX_USART_DRIVER_H
+#define STM32F407XX_USART_DRIVER_H
+#include <stm32f407xx.h>
+
+/* USART configuration struct */
+typedef struct
+{
+    uint8_t Mode;       /* Specifies the USART operating mode */
+    uint32_t BaudRate;  /* Specifies the USART communication baud rate */
+    uint8_t WordLength; /* Specifies the number of data bits transmitted or received in a frame */
+    uint8_t StopBits;   /* Specifies the number of stop bits transmitted */
+    uint8_t Parity;     /* Specifies the parity mode */
+    uint8_t OverSampling; /* Specifies the oversampling mode */
+} USART_Conf_t;
+
+/*USART_Mode*/
+#define USART_MODE_RX       1U      /*Only CR1_RE bit is enabled, receive mode only*/
+#define USART_MODE_TX       2U      /*Only CR1_TE bit is enabled, transmit mode only*/
+#define USART_MODE_TX_RX    3U      /*CR1_RE and CR1_TE bit are enabled, both receive and transmit mode*/
+
+/*USART_Common_Baudrate*/
+#define USART_BAUDRATE_115200    115200U    /*115200 bit per second*/
+#define USART_BAUDRATE_57600     57600U     /*57600 bit per second*/
+#define USART_BAUDRATE_38400     38400U     /*38400 bit per second*/
+#define USART_BAUDRATE_19200     19200U     /*19200 bit per second*/
+#define USART_BAUDRATE_9600      9600U      /*9600 bit per second*/
+#define USART_BAUDRATE_4800      4800U      /*4800 bit per second*/
+
+/*USART_Word_Length*/
+#define USART_WORDLENGTH_8B    0U    /*8 bit word length; 1 Start bit, 8 Data bits, n Stop bit*/
+#define USART_WORDLENGTH_9B    1U    /*9 bit word length; 1 Start bit, 9 Data bits, n Stop bit*/
+
+/*USART_Stop_Bits*/
+#define USART_STOPBITS_1       0U    /*1 stop bit*/
+#define USART_STOPBITS_0_5     1U    /*0.5 stop bits*/
+#define USART_STOPBITS_2       2U    /*2 stop bits*/
+#define USART_STOPBITS_1_5     3U    /*1.5 stop bits*/
+
+/*USART_Parity*/
+#define USART_PARITY_NONE      0U    /*No parity control*/
+#define USART_PARITY_EVEN      1U    /*Even parity control*/
+#define USART_PARITY_ODD       2U    /*Odd parity control*/
+
+/*USART_OverSampling*/
+#define USART_OVERSAMPLING_16  0U    /*16-bit oversampling mode*/
+#define USART_OVERSAMPLING_8   1U    /*8-bit oversampling mode*/
+
+/* USART register bits -----------------------------------------*/
+
+/* USART_CR1 */
+#define USART_CR1_RE        2U      /* RE bit */
+#define USART_CR1_TE        3U      /* TE bit */
+#define USART_CR1_PS        9U      /* PS bit */
+#define USART_CR1_PCE       10U     /* PCE bit */
+#define USART_CR1_M         12U     /* M bit */
+#define USART_CR1_UE        13U     /* UE bit */
+#define USART_CR1_OVER8     15U     /* OVER8 bit */
+
+/* USART_CR2 */
+#define USART_CR2_STOP      12U     /* STOP bits */
+
+/* USART_BRR */
+#define USART_DIV_MANTISSA  4U      /* Div_Mantissa */
+#define USART_DIV_FRACTION  0U      /* Div_Fraction */
+
+/*USART SR*/
+#define USART_SR_TXE        7U      /* TXE bit */
+#define USART_SR_RXNE       5U      /* RXNE bit */
+
+void USART_Init(USART_RegDef_t *USARTx, USART_Conf_t USART_Conf);
+void USART_Transmit(USART_RegDef_t *USARTx, uint8_t *Mess, uint8_t MessSize);
+void USART_Receive(USART_RegDef_t *USARTx, uint8_t *Mess, uint8_t MessSize);
+#endif

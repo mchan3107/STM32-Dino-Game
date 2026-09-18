@@ -33,7 +33,7 @@ void GPIO_Init(GPIO_RegDef_t *GPIOx, GPIO_PinConf_t GPIOPinConf) {
         } else {
             /* Configure the alternate function high register */
             GPIOx->AFRH &= ~(0x0F << GPIOPinConf.GPIO_PinNumber * 4);
-            GPIOx->AFRH |= (GPIOPinConf.GPIO_AltFunc << GPIOPinConf.GPIO_PinNumber * 4);
+            GPIOx->AFRH |= (GPIOPinConf.GPIO_AltFunc << (GPIOPinConf.GPIO_PinNumber-8) * 4);
         }
     }
 }

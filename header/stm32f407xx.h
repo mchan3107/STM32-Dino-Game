@@ -73,9 +73,23 @@ typedef struct
     volatile uint32_t PR;
 } EXTI_RegDef_t;
 
+/*USART register definition struct*/
+typedef struct
+{
+    volatile uint32_t SR;
+    volatile uint32_t DR;
+    volatile uint32_t BRR;
+    volatile uint32_t CR1;
+    volatile uint32_t CR2;
+    volatile uint32_t CR3;
+    volatile uint32_t GTPR;
+} USART_RegDef_t;
+
 /* Peripheral base addresses */
 #define AHB1_BASEADDR (0x40020000UL)
 #define AHB2_BASEADDR (0x40010000UL)
+#define APB1_BASEADDR (0x40000000UL)
+#define APB2_BASEADDR (0x40010000UL)
 #define GPIOA ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x0000UL)) /* GPIOA base address */
 #define GPIOB ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x0400UL)) /* GPIOB base address */
 #define GPIOC ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x0800UL)) /* GPIOC base address */
@@ -97,6 +111,14 @@ typedef struct
 /*EXTI base address*/
 #define EXTI ((EXTI_RegDef_t *) (AHB1_BASEADDR + 0x3C00UL))
 
+/* USART peripheral base address */
+#define USART1 ((USART_RegDef_t *) (AHB2_BASEADDR + 0x1000UL))
+#define USART2 ((USART_RegDef_t *) (APB1_BASEADDR + 0x4400UL))
+#define USART3 ((USART_RegDef_t *) (APB1_BASEADDR + 0x4800UL))
+#define UART4 ((USART_RegDef_t *) (APB1_BASEADDR + 0x4C00UL))
+#define UART5 ((USART_RegDef_t *) (APB1_BASEADDR + 0x5000UL))
+#define USART6 ((USART_RegDef_t *) (APB2_BASEADDR + 0x1400UL))
+
 /*GPIO clock enable*/
 #define GPIOA_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 0U)) /*GPIOA peripheral clock enable*/
 #define GPIOB_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 1U)) /*GPIOB peripheral clock enable*/
@@ -109,6 +131,14 @@ typedef struct
 #define GPIOI_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 8U)) /*GPIOI peripheral clock enable*/
 
 #define SYSCFG_CLK_ENB() (RCC->APB2ENR |= (0x01U << 14U)) /*SYSCFG peripheral clock enable*/
+
+/*USART peripheral clock enable*/
+#define USART1_CLK_ENB() (RCC->APB2ENR |= (0x01U << 4))
+#define USART2_CLK_ENB() (RCC->APB1ENR |= (0x01U << 17))
+#define USART3_CLK_ENB() (RCC->APB1ENR |= (0x01U << 18))
+#define UART4_CLK_ENB() (RCC->APB1ENR |= (0x01U << 19))
+#define UART5_CLK_ENB() (RCC->APB1ENR |= (0x01U << 20))
+#define USART6_CLK_ENB() (RCC->APB2ENR |= (0x01U << 5))
 
 /*GPIO clock disable*/
 #define GPIOA_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 0U)) /*GPIOA peripheral clock disable*/
@@ -123,5 +153,20 @@ typedef struct
 
 #define SYSCFG_CLK_DIS() (RCC->APB2ENR &= ~(0x01U << 14U)) /*SYSCFG peripheral clock disable*/
 
+/*USART clock disable*/
+#define USART1_CLK_DIS() (RCC->APB2ENR &= ~(0x01U << 4))
+#define USART2_CLK_DIS() (RCC->APB1ENR &= ~(0x01U << 17))
+#define USART3_CLK_DIS() (RCC->APB1ENR &= ~(0x01U << 18))
+#define UART4_CLK_DIS() (RCC->APB1ENR &= ~(0x01U << 19))
+#define UART5_CLK_DIS() (RCC->APB1ENR &= ~(0x01U << 20))
+#define USART6_CLK_DIS() (RCC->APB2ENR &= ~(0x01U << 5))
+
+/*Common used macros*/
+#define ENABLE 1U
+#define DISABLE 0U
+#define BIT_RESET 0U
+#define BIT_SET 1U
+
 #include "stm32f407xx_gpio_driver.h"
+#include "stm32f407xx_usart_driver.h"
 #endif
