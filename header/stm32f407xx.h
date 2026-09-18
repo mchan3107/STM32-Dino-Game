@@ -146,7 +146,7 @@ typedef struct
 #define SYSCFG ((SYSCFG_RegDef_t *) (AHB2_BASEADDR + 0x3800UL))
 
 /*EXTI base address*/
-#define EXTI ((EXTI_RegDef_t *) (AHB1_BASEADDR + 0x3C00UL))
+#define EXTI ((EXTI_RegDef_t *) (APB2_BASEADDR + 0x3C00UL))
 
 /* USART peripheral base address */
 #define USART1 ((USART_RegDef_t *) (AHB2_BASEADDR + 0x1000UL))
