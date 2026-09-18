@@ -29,3 +29,13 @@ void TIM_Base_Stop(TIM_RegDef_t * TIMx)
     /*Stop the timer*/
     TIMx->CR1 &= ~(1 << TIM_CR1_CEN);
 }
+
+void TIM_Base_IT_Init(TIM_RegDef_t * TIMx, uint8_t Priority)
+{
+    /*Set the priority of the interrupt*/
+    NVIC_SetPriority(TIMx_TO_IRQ(TIMx), Priority);
+    /*Enable the IRQ of TIMx*/
+    NVIC_EnableIRQ(TIMx_TO_IRQ(TIMx));
+    /*Enable the TIMx update interrupt*/
+    TIMx->DIER |= (0x01U << TIM_DIER_UIE);
+}
