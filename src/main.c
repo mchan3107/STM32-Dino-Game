@@ -91,7 +91,7 @@ void TIM6_Start(void)
     TIM_Base_Start(TIM6);
 }
 
-void TIM6_STOP(void) {
+void TIM6_Stop(void) {
     TIM_Base_Stop(TIM6);
 }
 
@@ -101,8 +101,6 @@ void TIM6_IT_Init(void) {
 }
 
 int main(void){
-	uint16_t Timer6DelayCounter = 0U;
-
     /*GPIO init start---------------------------------------------*/
     /*Initialize the blue LED*/
     BlueLED_Init();
@@ -153,7 +151,7 @@ int main(void){
 
 void EXTI0_IRQHandler(void)
 {
-    TIM6_START();
+    TIM6_Start();
 
     /*Is the corresponding bit in the EXTI_PR register set?*/
     if((EXTI->PR >> UserButton.GPIO_PinNumber) & 0x01U)
@@ -162,8 +160,6 @@ void EXTI0_IRQHandler(void)
         EXTI->PR |= (0x01U << UserButton.GPIO_PinNumber);
     }
 
-    /*Transmit data*/
-    USART_Transmit(USART3, (uint8_t *)&SentMess, TxMessSize);
 }
 
 void USART3_IRQHandler(void)

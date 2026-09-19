@@ -81,7 +81,7 @@ typedef struct
 #define TIM6_UEV_STS_CLR()  (TIM6->SR &= ~(0x01 << TIM_SR_UIF))      /*Timer 6 - clear update event status*/
 
 /*Macro to map IRQn to TIMx*/
-#define TIMX_TO_IRQn(TIMx) \
+#define TIMX_TO_IRQ(TIMx) \
     ((TIMx == TIM6) ? IRQ_NO_TIM6_DAC : \
      (TIMx == TIM7) ? IRQ_NO_TIM7 : IRQ_NO_TIM6_DAC)
 
