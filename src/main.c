@@ -5,6 +5,8 @@ GPIO_PinConf_t Blinky_LED;
 GPIO_PinConf_t UserButton;
 USART_Conf_t USART3_Conf;
 TIM_Base_Conf_t TIM6_Conf;
+TIM_Base_Conf_t TIM4_Conf;
+TIM_OC_Conf_t TIM4_OC_Conf;
 
 #define RX_BUFFER_SIZE  8U
 #define TX_BUFFER_SIZE  8U
@@ -86,6 +88,41 @@ void TIM6_Init(void)
     TIM_Base_Init(TIM6, TIM6_Conf);
 }
 
+void TIM4_OC_Init(void)
+{
+    GPIO_PinConf_t OC_Pin;
+
+    /*GPIO - TIM4 output compare pin configuration
+      Configure GPIO (GPIOD pin15/channel 4) pin to use in alternate function mode (TIM4 - OC Channel 4)*/
+    OC_Pin.GPIO_PinMode   = GPIO_MODE_ALT;
+    OC_Pin.GPIO_PUPD      = GPIO_NO_PUPD;
+    OC_Pin.GPIO_OutType   = GPIO_OUT_TYPE_PP;
+    OC_Pin.GPIO_OutSpeed  = GPIO_OUT_SPEED_VERY_HIGH;
+    OC_Pin.GPIO_PinNumber = GPIO_PIN_NUM_15;
+    OC_Pin.GPIO_AltFunc    = GPIO_ALT_AF2;
+    GPIOD_CLK_ENB();
+    GPIO_Init(GPIOD, OC_Pin);
+
+    /*Timer 4 configuration*/
+    /*Timer base init*/
+    TIM4_Conf.AutoReloadPreload = ENABLE;
+    TIM4_Conf.Period            = 999;        /*1ms period*/
+    TIM4_Conf.Prescaler         = 15;         /*Counter clock is 1Mhz (with 16 Mhz timer clock)*/
+    TIM4_Conf.CounterMode       = TIM_UPCOUNTING;
+    TIM4_CLK_ENB();
+    TIM_Base_Init(TIM4, TIM4_Conf);
+
+    /*Output compare init*/
+    TIM4_OC_Conf.OCMode     = TIM_OCMODE_PWM1;
+    TIM4_OC_Conf.OCPolarity = TIM_OCPOLARITY_HIGH;
+    TIM4_OC_Conf.Pulse      = 0;
+    TIM_OC_Init(TIM4, TIM4_OC_Conf, TIM_OC_CHANNEL_4);
+}
+
+TIM4_Start(void) {
+	TIM_Base_Start(TIM4);
+}
+
 void TIM6_Start(void)
 {
     TIM_Base_Start(TIM6);
@@ -101,6 +138,7 @@ void TIM6_IT_Init(void) {
 }
 
 int main(void){
+	uint8_t DutyCycle = 0;
     /*GPIO init start---------------------------------------------*/
     /*Initialize the blue LED*/
     BlueLED_Init();
@@ -117,6 +155,7 @@ int main(void){
 	/*TIM6 init start----------------------------------------------*/
 	TIM6_Init();
 	TIM6_IT_Init();
+	TIM4_OC_Init();
 	/*TIM6 init end------------------------------------------------*/
 
 	while (1)
