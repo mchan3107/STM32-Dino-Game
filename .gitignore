@@ -1,0 +1,12 @@
+# Ignore everything
+*
+
+# Do not ignore .gitignore
+!.gitignore
+
+# Do not ignore source and header files
+!*.c
+!*.h
+
+# Do not ignore directories (ask Git to track inside them)
+!*/
