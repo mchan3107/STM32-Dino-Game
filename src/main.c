@@ -1,5 +1,6 @@
 #include "stm32f407xx.h"
 #include <string.h>
+#include <stdlib.h>
 
 GPIO_PinConf_t Blinky_LED;
 GPIO_PinConf_t UserButton;
@@ -119,7 +120,7 @@ void TIM4_OC_Init(void)
     TIM_OC_Init(TIM4, TIM4_OC_Conf, TIM_OC_CHANNEL_4);
 }
 
-TIM4_Start(void) {
+void TIM4_Start(void) {
 	TIM_Base_Start(TIM4);
 }
 
@@ -163,25 +164,37 @@ int main(void){
 		/*Is new data available?*/
 		if (IsRxAvailable == TRUE)
 		{
-			/*Check if update event generated*/
-			if (TIM6_UEV_STS() == BIT_SET)
+			/*Check overflow status and store data*/
+			if (RxIndex < RX_BUFFER_SIZE)
 			{
-				/*Clear the update event status*/
-				TIM6_UEV_STS_CLR();
+				/*Store new data to the received message*/
+				ReceivedMess[RxIndex] = RxData;
 
-				/*Increase the timer delay counter by 1*/
-				Timer6DelayCounter++;
-
-				/*Check if 1 second has elapsed*/
-				if (Timer6DelayCounter == 1000)
-				{
-					/*Toggle the Blue LED*/
-					GPIO_TogglePin(GPIOD, GPIO_PIN_NUM_15);
-
-					/*Reset timer 6 delay counter*/
-					Timer6DelayCounter = 0U;
-				}
+				/*Increase the index*/
+				RxIndex++;
 			}
+			else
+			{
+				RxIndex = 0U; /*Overflow recovery*/
+			}
+
+			IsRxAvailable = FALSE;
+			/*Check if the message is fully received*/
+			if (RxData == '\n')
+			{
+				/*Null-terminate the string/message*/
+				ReceivedMess[RxIndex - 1] = '\0';
+
+				DutyCycle = atoi((const char *) ReceivedMess);
+
+				/*Set duty cycle for timer 4 pwm channel 4*/
+				TIM4_OC_PWM_SET_DUTY(TIM_OC_CHANNEL_4, (TIM4_Conf.Period * DutyCycle) / 100);
+
+				/*Reset the index*/
+				RxIndex = 0U;
+			}
+
+			
 		}
 	}
 

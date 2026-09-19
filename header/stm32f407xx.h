@@ -90,21 +90,6 @@ typedef struct
 {
     volatile uint32_t CR1;
     volatile uint32_t CR2;
-    uint32_t RESERVED0;
-    volatile uint32_t DIER;
-    volatile uint32_t SR;
-    volatile uint32_t EGR;
-    uint32_t RESERVED1[3];
-    volatile uint32_t CNT;
-    volatile uint32_t PSC;
-    volatile uint32_t ARR;
-} TIM_RegDef_t;
-
-/*Timer register definition struct*/
-typedef struct
-{
-    volatile uint32_t CR1;
-    volatile uint32_t CR2;
     volatile uint32_t SMCR;
     volatile uint32_t DIER;
     volatile uint32_t SR;
@@ -198,8 +183,6 @@ typedef struct
 #define TIM3_CLK_ENB()    (RCC->APB1ENR |= (0x01 << 1U))    /*Timer 3 peripheral clock enable */
 #define TIM4_CLK_ENB()    (RCC->APB1ENR |= (0x01 << 2U))    /*Timer 4 peripheral clock enable */
 #define TIM5_CLK_ENB()    (RCC->APB1ENR |= (0x01 << 3U))    /*Timer 5 peripheral clock enable */
-#define TIM6_CLK_ENB()    (RCC->APB1ENR |= (0x01 << 4U))    /*Timer 6 peripheral clock enable */
-#define TIM7_CLK_ENB()    (RCC->APB1ENR |= (0x01 << 5U))    /*Timer 7 peripheral clock enable */
 
 /*GPIO clock disable*/
 #define GPIOA_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 0U)) /*GPIOA peripheral clock disable*/
