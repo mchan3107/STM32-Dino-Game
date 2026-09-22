@@ -10,3 +10,6 @@
 
 # Do not ignore directories (ask Git to track inside them)
 !*/
+
+# Do not ignore README.md
+!README.md
